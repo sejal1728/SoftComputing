@@ -1,0 +1,67 @@
+# Define fuzzy sets A and B 
+
+A = {'x1': 0.2, 'x2': 0.7, 'x3': 1.0} 
+
+B = {'x1': 0.5, 'x2': 0.4, 'x3': 0.9} 
+
+ 
+
+# Complement of a fuzzy set 
+
+def complement(A): 
+
+    return {x: 1 - A[x] for x in A} 
+
+ 
+
+# Union of two fuzzy sets 
+
+def union(A, B): 
+
+    return {x: max(A[x], B[x]) for x in A} 
+
+ 
+
+# Intersection of two fuzzy sets 
+
+def intersection(A, B): 
+
+    return {x: min(A[x], B[x]) for x in A} 
+
+ 
+
+# De-Morgan's First Law: (A ∪ B)' = A' ∩ B' 
+
+left1 = complement(union(A, B)) 
+
+right1 = intersection(complement(A), complement(B)) 
+
+ 
+
+# De-Morgan's Second Law: (A ∩ B)' = A' ∪ B' 
+
+left2 = complement(intersection(A, B)) 
+
+right2 = union(complement(A), complement(B)) 
+
+ 
+
+# Display results 
+
+print("First Law:") 
+
+print("(A ∪ B)' =", left1) 
+
+print("A' ∩ B'  =", right1) 
+
+print("First Law Verified:", left1 == right1) 
+
+ 
+
+print("\nSecond Law:") 
+
+print("(A ∩ B)' =", left2) 
+
+print("A' ∪ B'  =", right2) 
+
+print("Second Law Verified:", left2 == right2) 
