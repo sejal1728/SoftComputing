@@ -1,0 +1,189 @@
+import random 
+
+ 
+
+# Objective function 
+
+def fitness(x): 
+
+    return x ** 2 
+
+ 
+
+# Particle class 
+
+class Particle: 
+
+    def __init__(self, x_min, x_max): 
+
+        self.position = random.uniform(x_min, x_max) 
+
+        self.velocity = random.uniform(-1, 1) 
+
+        self.best_position = self.position 
+
+        self.best_fitness = fitness(self.position) 
+
+ 
+
+    def update_velocity_gbest(self, global_best, w=0.5, c1=1, c2=2): 
+
+        r1, r2 = random.random(), random.random() 
+
+        self.velocity = ( 
+
+            w * self.velocity 
+
+            + c1 * r1 * (self.best_position - self.position) 
+
+            + c2 * r2 * (global_best - self.position) 
+
+        ) 
+
+ 
+
+    def update_velocity_lbest(self, local_best, w=0.5, c1=1, c2=2): 
+
+        r1, r2 = random.random(), random.random() 
+
+        self.velocity = ( 
+
+            w * self.velocity 
+
+            + c1 * r1 * (self.best_position - self.position) 
+
+            + c2 * r2 * (local_best - self.position) 
+
+        ) 
+
+ 
+
+    def move(self): 
+
+        self.position += self.velocity 
+
+        current_fitness = fitness(self.position) 
+
+ 
+
+        if current_fitness < self.best_fitness: 
+
+            self.best_fitness = current_fitness 
+
+            self.best_position = self.position 
+
+ 
+
+# Global Best PSO 
+
+def pso_gbest(num_particles=5, iterations=10, 
+
+              x_min=-10, x_max=10): 
+
+    particles = [Particle(x_min, x_max) 
+
+                 for _ in range(num_particles)] 
+
+ 
+
+    global_best = min( 
+
+        particles, key=lambda p: p.best_fitness 
+
+    ).best_position 
+
+ 
+
+    for i in range(iterations): 
+
+        for p in particles: 
+
+            p.update_velocity_gbest(global_best) 
+
+            p.move() 
+
+ 
+
+        global_best = min( 
+
+            particles, key=lambda p: p.best_fitness 
+
+        ).best_position 
+
+ 
+
+        print(f"Iteration {i+1}: Position = {global_best:.4f}, " 
+
+              f"Fitness = {fitness(global_best):.4f}") 
+
+ 
+
+# Local Best PSO 
+
+def pso_lbest(num_particles=5, iterations=10, 
+
+              x_min=-10, x_max=10, neighborhood_size=2): 
+
+    particles = [Particle(x_min, x_max) 
+
+                 for _ in range(num_particles)] 
+
+ 
+
+    for i in range(iterations): 
+
+        for idx, p in enumerate(particles): 
+
+            neighbors = particles[ 
+
+                max(0, idx - neighborhood_size // 2): 
+
+                min(num_particles, 
+
+                    idx + neighborhood_size // 2 + 1) 
+
+            ] 
+
+ 
+
+            local_best = min( 
+
+                neighbors, key=lambda p: p.best_fitness 
+
+            ).best_position 
+
+ 
+
+            p.update_velocity_lbest(local_best) 
+
+            p.move() 
+
+ 
+
+        best_particle = min( 
+
+            particles, key=lambda p: p.best_fitness 
+
+        ) 
+
+ 
+
+        print(f"Iteration {i+1}: Position = " 
+
+              f"{best_particle.best_position:.4f}, " 
+
+              f"Fitness = {best_particle.best_fitness:.4f}") 
+
+ 
+
+# Run PSO 
+
+print("Running PSO with Global Best (gbest):") 
+
+pso_gbest() 
+
+ 
+
+print("\nRunning PSO with Local Best (lbest):") 
+
+pso_lbest()
