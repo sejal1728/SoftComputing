@@ -1,0 +1,258 @@
+import random 
+
+import numpy as np 
+
+import matplotlib.pyplot as plt 
+
+ 
+
+# Configuration 
+
+num_cities = 6 
+
+num_ants = 10 
+
+num_iterations = 100 
+
+alpha = 1 
+
+beta = 2 
+
+evaporation_rate = 0.5 
+
+pheromone_deposit = 100 
+
+ 
+
+# Generate random city coordinates 
+
+city_coords = np.random.rand(num_cities, 2) * 100 
+
+ 
+
+# Calculate distance matrix 
+
+def calculate_distance_matrix(coords): 
+
+    num = len(coords) 
+
+    matrix = np.zeros((num, num)) 
+
+ 
+
+    for i in range(num): 
+
+        for j in range(num): 
+
+            if i != j: 
+
+                matrix[i][j] = np.linalg.norm( 
+
+                    coords[i] - coords[j] 
+
+                ) 
+
+    return matrix 
+
+ 
+
+distances = calculate_distance_matrix(city_coords) 
+
+pheromones = np.ones((num_cities, num_cities)) 
+
+ 
+
+# Choose next city 
+
+def choose_next_city(current_city, visited): 
+
+    probabilities = [] 
+
+ 
+
+    for city in range(num_cities): 
+
+        if city in visited: 
+
+            probabilities.append(0) 
+
+        else: 
+
+            pheromone = pheromones[current_city][city] ** alpha 
+
+            visibility = (1 / distances[current_city][city]) ** beta 
+
+            probabilities.append(pheromone * visibility) 
+
+ 
+
+    total = sum(probabilities) 
+
+ 
+
+    if total == 0: 
+
+        return random.choice( 
+
+            [c for c in range(num_cities) if c not in visited] 
+
+        ) 
+
+ 
+
+    probabilities = np.array(probabilities) / total 
+
+    return np.random.choice( 
+
+        range(num_cities), p=probabilities 
+
+    ) 
+
+ 
+
+# Build a route 
+
+def build_solution(): 
+
+    start = random.randint(0, num_cities - 1) 
+
+    path = [start] 
+
+ 
+
+    while len(path) < num_cities: 
+
+        next_city = choose_next_city(path[-1], path) 
+
+        path.append(next_city) 
+
+ 
+
+    path.append(start) 
+
+    return path 
+
+ 
+
+# Calculate route length 
+
+def path_length(path): 
+
+    return sum( 
+
+        distances[path[i]][path[i + 1]] 
+
+        for i in range(len(path) - 1) 
+
+    ) 
+
+ 
+
+# ACO main loop 
+
+best_path = None 
+
+best_length = float('inf') 
+
+ 
+
+for iteration in range(num_iterations): 
+
+    all_paths = [] 
+
+ 
+
+    for _ in range(num_ants): 
+
+        path = build_solution() 
+
+        length = path_length(path) 
+
+        all_paths.append((path, length)) 
+
+ 
+
+        if length < best_length: 
+
+            best_length = length 
+
+            best_path = path 
+
+ 
+
+    # Pheromone evaporation 
+
+    pheromones *= (1 - evaporation_rate) 
+
+ 
+
+    # Pheromone deposit 
+
+    for path, length in all_paths: 
+
+        for i in range(len(path) - 1): 
+
+            a, b = path[i], path[i + 1] 
+
+            pheromones[a][b] += pheromone_deposit / length 
+
+            pheromones[b][a] += pheromone_deposit / length 
+
+ 
+
+# Display results 
+
+print("Best path:", best_path) 
+
+print("Shortest distance:", round(best_length, 2)) 
+
+ 
+
+# Plot best route 
+
+def plot_path(path, coords, title): 
+
+    plt.figure(figsize=(8, 6)) 
+
+ 
+
+    x = [coords[city][0] for city in path] 
+
+    y = [coords[city][1] for city in path] 
+
+ 
+
+    plt.plot(x, y, 'b-', label='Path') 
+
+    plt.scatter(coords[:, 0], coords[:, 1], 
+
+                c='red', label='Cities') 
+
+ 
+
+    for i, (xi, yi) in enumerate(coords): 
+
+        plt.text(xi + 1, yi + 1, str(i)) 
+
+ 
+
+    plt.title(title) 
+
+    plt.xlabel("X") 
+
+    plt.ylabel("Y") 
+
+    plt.legend() 
+
+    plt.grid(True) 
+
+    plt.show() 
+
+ 
+
+plot_path( 
+
+    best_path, city_coords, 
+
+    f"Best Path (Distance: {best_length:.2f})"
+)
