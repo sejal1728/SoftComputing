@@ -1,0 +1,59 @@
+import numpy as np 
+
+# Sigmoid activation function 
+
+def sigmoid(x): 
+
+    return 1 / (1 + np.exp(-x)) 
+
+# Inputs 
+
+inputs = np.array([0.5, 0.9]) 
+
+# Weights from input layer to hidden layer 
+
+weights_input_hidden = np.array([ 
+
+    [0.4, 0.3], 
+
+    [0.7, 0.9] 
+
+]) 
+
+ 
+
+# Hidden layer bias 
+
+bias_hidden = np.array([0.1, 0.2]) 
+
+# Weights from hidden layer to output layer 
+
+weights_hidden_output = np.array([0.6, 0.8]) 
+
+# Output layer bias 
+
+bias_output = 0.3 
+
+ 
+
+# Feedforward calculation 
+
+hidden_layer_input = np.dot(inputs, weights_input_hidden) + bias_hidden 
+
+hidden_layer_output = sigmoid(hidden_layer_input) 
+
+output_layer_input = np.dot(hidden_layer_output, weights_hidden_output) + bias_output 
+
+output = sigmoid(output_layer_input) 
+
+ 
+
+# Display results 
+
+print("Input:", inputs) 
+
+print("Hidden layer output:", hidden_layer_output) 
+
+print("Final output:", output) 
+
+ 
