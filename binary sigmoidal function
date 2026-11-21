@@ -1,0 +1,43 @@
+import numpy as np 
+
+ 
+
+# Binary sigmoid activation function 
+
+def binary_sigmoid(x): 
+
+    return 1 / (1 + np.exp(-x)) 
+
+ 
+
+# Input values 
+
+inputs = np.array([1, 0]) 
+
+ 
+
+# Weights and bias 
+
+weights = np.array([0.5, -0.4]) 
+
+bias = 0.2 
+
+ 
+
+# Calculate net input 
+
+net_input = np.dot(inputs, weights) + bias 
+
+ 
+
+# Calculate output 
+
+output = binary_sigmoid(net_input) 
+
+ 
+
+print("Net Input:", net_input) 
+
+print("Neural Network Output:", round(output, 4)) 
+
+ 
