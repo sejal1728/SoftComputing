@@ -1,0 +1,137 @@
+import numpy as np 
+
+import matplotlib.pyplot as plt 
+
+ 
+
+# Triangular membership function 
+
+def triangular(x, a, b, c): 
+
+    return np.maximum( 
+
+        np.minimum((x-a)/(b-a+1e-6), 
+
+                   (c-x)/(c-b+1e-6)), 0 
+
+    ) 
+
+ 
+
+# Temperature membership functions 
+
+def temp_cold(x): 
+
+    return triangular(x, 0, 0, 20) 
+
+ 
+
+def temp_warm(x): 
+
+    return triangular(x, 15, 25, 35) 
+
+ 
+
+def temp_hot(x): 
+
+    return triangular(x, 30, 40, 40) 
+
+ 
+
+# Fan speed membership functions 
+
+def fan_low(x): 
+
+    return triangular(x, 0, 0, 50) 
+
+ 
+
+def fan_medium(x): 
+
+    return triangular(x, 25, 50, 75) 
+
+ 
+
+def fan_high(x): 
+
+    return triangular(x, 50, 100, 100) 
+
+ 
+
+# Fuzzy inference 
+
+def infer_fan_speed(temp_input): 
+
+    cold = temp_cold(temp_input) 
+
+    warm = temp_warm(temp_input) 
+
+    hot = temp_hot(temp_input) 
+
+ 
+
+    x = np.linspace(0, 100, 1000) 
+
+ 
+
+    low = np.fmin(cold, fan_low(x)) 
+
+    medium = np.fmin(warm, fan_medium(x)) 
+
+    high = np.fmin(hot, fan_high(x)) 
+
+ 
+
+    # Aggregate outputs 
+
+    aggregated = np.fmax(low, np.fmax(medium, high)) 
+
+ 
+
+    # Centroid defuzzification 
+
+    if np.sum(aggregated) == 0: 
+
+        output = 0 
+
+    else: 
+
+        output = np.sum(x * aggregated) / np.sum(aggregated) 
+
+ 
+
+    return output, x, aggregated 
+
+ 
+
+# Example temperature 
+
+temperature = 35 
+
+fan_speed, x, agg = infer_fan_speed(temperature) 
+
+ 
+
+print(f"Temperature: {temperature}°C => Fan Speed: {fan_speed:.2f}%") 
+
+ 
+
+# Plot the output 
+
+plt.plot(x, agg, label="Aggregated Output") 
+
+plt.axvline(fan_speed, color="red", linestyle="--", 
+
+            label=f"Fan Speed: {fan_speed:.2f}%") 
+
+plt.title("Fuzzy Logic Fan Speed Controller") 
+
+plt.xlabel("Fan Speed (%)") 
+
+plt.ylabel("Membership Degree") 
+
+plt.legend() 
+
+plt.grid(True) 
+
+plt.show() 
