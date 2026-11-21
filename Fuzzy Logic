@@ -1,0 +1,41 @@
+%pip install fuzzywuzzy 
+
+ 
+
+from fuzzywuzzy import fuzz, process 
+
+ 
+
+s1 = "I love fuzzysforfuzzys" 
+
+s2 = "I am loving fuzzysforfuzzys" 
+
+ 
+
+print("FuzzyWuzzy Ratio:", fuzz.ratio(s1, s2)) 
+
+print("FuzzyWuzzy PartialRatio:", fuzz.partial_ratio(s1, s2)) 
+
+print("FuzzyWuzzy TokenSortRatio:", fuzz.token_sort_ratio(s1, s2)) 
+
+print("FuzzyWuzzy TokenSetRatio:", fuzz.token_set_ratio(s1, s2)) 
+
+print("FuzzyWuzzy WRatio:", fuzz.WRatio(s1, s2)) 
+
+ 
+
+query = "fuzzys for fuzzys" 
+
+choices = ["fuzzy for fuzzy", "fuzzy fuzzy", "g. for fuzzys"] 
+
+ 
+
+print("\nList of ratios:") 
+
+print(process.extract(query, choices)) 
+
+ 
+
+print("\nBest match:") 
+
+print(process.extractOne(query, choices))
