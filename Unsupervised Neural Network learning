@@ -1,0 +1,41 @@
+import numpy as np 
+
+ 
+
+# Input patterns 
+
+X = np.array([[1, 1], [1, -1], [-1, 1], [-1, -1]]) 
+
+ 
+
+# Initialize weights 
+
+weights = np.zeros(2) 
+
+learning_rate = 0.1 
+
+ 
+
+# Hebbian learning 
+
+for x in X: 
+
+    weights += learning_rate * x 
+
+ 
+
+print("Final Weights:", weights) 
+
+ 
+
+# Test input 
+
+test_input = np.array([1, 1]) 
+
+output = np.dot(test_input, weights) 
+
+ 
+
+print("Input:", test_input) 
+
+print("Output:", output) 
