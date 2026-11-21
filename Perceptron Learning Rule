@@ -1,0 +1,103 @@
+# Perceptron Learning Rule for AND Gate 
+# Initial weights and bias weight 
+
+w = [-1, 1, 1] 
+
+learning_rate = 0.1 
+
+# Training data: [bias, x1, x2], target 
+
+training_data = [ 
+
+    ([1, 0, 0], 0), 
+
+    ([1, 0, 1], 0), 
+
+    ([1, 1, 0], 0), 
+
+    ([1, 1, 1], 1) 
+
+] 
+
+
+# Perceptron output 
+
+def perceptron_output(weights, inputs): 
+
+    activation = sum(w * x for w, x in zip(weights, inputs)) 
+
+    return 1 if activation >= 0 else 0 
+
+ 
+
+# Training function 
+
+def train_perceptron(weights, data, lr, epochs=10): 
+
+    for epoch in range(epochs): 
+
+        print(f"\nEpoch {epoch + 1}") 
+
+        total_error = 0 
+
+ 
+
+        for inputs, target in data: 
+
+            output = perceptron_output(weights, inputs) 
+
+            error = target - output 
+
+            total_error += abs(error) 
+
+ 
+
+            for i in range(len(weights)): 
+
+                weights[i] += lr * error * inputs[i] 
+
+ 
+
+            print(f"Inputs: {inputs[1:]}, Target: {target}, " 
+
+                  f"Output: {output}, Weights: {weights}") 
+
+ 
+
+        if total_error == 0: 
+
+            print("Training complete with zero error.") 
+
+            break 
+
+ 
+
+    return weights 
+
+ 
+
+# Train the perceptron 
+
+final_weights = train_perceptron( 
+
+    w, training_data, learning_rate 
+
+) 
+
+ 
+
+print("\nFinal weights:", final_weights) 
+
+ 
+
+# Test the perceptron 
+
+print("\nTesting Perceptron:") 
+
+for inputs, target in training_data: 
+
+    output = perceptron_output(final_weights, inputs) 
+
+    print(f"Input: {inputs[1:]}, Expected: {target}, " 
+
+          f"Predicted: {output}")
