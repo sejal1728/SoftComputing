@@ -1,0 +1,151 @@
+import random 
+
+ 
+
+# Parameters 
+
+POP_SIZE = 4 
+
+GENE_LEN = 5 
+
+GENERATIONS = 5 
+
+CROSSOVER_RATE = 0.7 
+
+MUTATION_RATE = 0.1 
+
+ 
+
+# Fitness function 
+
+def fitness(ind): 
+
+    return int(ind, 2) ** 2 
+
+ 
+
+# Create random individual 
+
+def create_individual(): 
+
+    return ''.join(random.choice('01') for _ in range(GENE_LEN)) 
+
+ 
+
+# Mutation 
+
+def mutate(ind): 
+
+    ind_list = list(ind) 
+
+    for i in range(len(ind_list)): 
+
+        if random.random() < MUTATION_RATE: 
+
+            ind_list[i] = '1' if ind_list[i] == '0' else '0' 
+
+    return ''.join(ind_list) 
+
+ 
+
+# Single-point crossover 
+
+def crossover(p1, p2): 
+
+    if random.random() < CROSSOVER_RATE: 
+
+        point = random.randint(1, GENE_LEN - 1) 
+
+        return (p1[:point] + p2[point:], 
+
+                p2[:point] + p1[point:]) 
+
+    return p1, p2 
+
+ 
+
+# Roulette wheel selection 
+
+def select(pop): 
+
+    total_fit = sum(fitness(i) for i in pop) 
+
+    if total_fit == 0: 
+
+        return random.choice(pop) 
+
+ 
+
+    pick = random.uniform(0, total_fit) 
+
+    current = 0 
+
+ 
+
+    for ind in pop: 
+
+        current += fitness(ind) 
+
+        if current >= pick: 
+
+            return ind 
+
+ 
+
+    return pop[-1] 
+
+ 
+
+# Initialize population 
+
+population = [create_individual() for _ in range(POP_SIZE)] 
+
+ 
+
+# Genetic algorithm 
+
+for gen in range(GENERATIONS): 
+
+    best_ind = max(population, key=fitness) 
+
+    print(f"Generation {gen + 1}: {best_ind}, " 
+
+          f"Fitness: {fitness(best_ind)}") 
+
+ 
+
+    new_pop = [] 
+
+ 
+
+    while len(new_pop) < POP_SIZE: 
+
+        parent1 = select(population) 
+
+        parent2 = select(population) 
+
+ 
+
+        child1, child2 = crossover(parent1, parent2) 
+
+ 
+
+        new_pop.extend([mutate(child1), mutate(child2)]) 
+
+ 
+
+    population = new_pop[:POP_SIZE] 
+
+ 
+
+# Best solution 
+
+best = max(population, key=fitness) 
+
+print(f"\nBest solution: {best}") 
+
+print("Decimal value:", int(best, 2)) 
+
+print("Fitness:", fitness(best)) 
+
+ 
